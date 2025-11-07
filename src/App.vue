@@ -1,13 +1,10 @@
 <script setup>
-import { demoApi } from './apis/demo';
-const handleClick = async () =>{
-  const res = await demoApi()
-  console.log(res);
-}
+import { RouterView } from 'vue-router';
+
 </script>
 
 <template>
-  <el-button type="primary" @click="handleClick">i am button</el-button>
+  <RouterView/>
 </template>
 
 <style scoped></style>
