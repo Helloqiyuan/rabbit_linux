@@ -1,5 +1,18 @@
 <script setup>
-
+import {onMounted, ref} from 'vue'
+import {getAllCategory} from '@/apis/layout'
+const categoryData = ref([])
+/*
+  获取一级分类的数据
+ */
+const getCategoryData = async ()=>{
+  const res = await getAllCategory()
+  categoryData.value = res.result
+  // console.log(res);
+}
+onMounted(()=>{
+  getCategoryData()
+})
 </script>
 
 <template>
@@ -12,9 +25,9 @@
         <li class="home">
           <RouterLink to="/">首页</RouterLink>
         </li>
-        <li> <RouterLink to="/">居家</RouterLink> </li>
-        <li> <RouterLink to="/">美食</RouterLink> </li>
-        <li> <RouterLink to="/">服饰</RouterLink> </li>
+        <li v-for="e in categoryData" :key="e.id">
+          <RouterLink to="/">{{ e.name }}</RouterLink>
+        </li>
       </ul>
       <div class="search">
         <i class="iconfont icon-search"></i>
