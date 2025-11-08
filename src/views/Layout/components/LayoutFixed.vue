@@ -3,7 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useScroll } from '@vueuse/core'
 // 从pinia中获取分类数据
 import { useCategoryStore } from '@/stores/category'
-const store = useCategoryStore()
+const categoryStore = useCategoryStore()
 const { y } = useScroll(window)
 
 </script>
@@ -17,7 +17,7 @@ const { y } = useScroll(window)
         <li class="home">
           <RouterLink to="/">首页</RouterLink>
         </li>
-        <li v-for="e in store.globalCategoryData" :key="e.id">
+        <li v-for="e in categoryStore.globalCategoryData" :key="e.id">
           <RouterLink to="/">{{ e.name }}</RouterLink>
         </li>
       </ul>

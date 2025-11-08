@@ -10,6 +10,7 @@ export const useCategoryStore = defineStore("category", () => {
   const getCategoryData = async () => {
     const res = await getAllCategoryApi();
     globalCategoryData.value = res.result;
+    console.log(globalCategoryData);
   };
 
   return { globalCategoryData, getCategoryData };

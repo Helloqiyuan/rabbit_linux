@@ -12,10 +12,11 @@ const router = createRouter({
     {
       path: "/",
       name: "Layout",
+      redirect:"/home",
       component: Layout,
       children: [
         {
-          path: "",
+          path: "/home",
           component: Home,
         },
         {

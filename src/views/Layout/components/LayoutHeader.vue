@@ -2,7 +2,7 @@
 import {onMounted, ref} from 'vue'
 // 从pinia中获取分类数据
 import {useCategoryStore} from '@/stores/category'
-const store = useCategoryStore()
+const categoryStore = useCategoryStore()
 </script>
 
 <template>
@@ -15,7 +15,7 @@ const store = useCategoryStore()
         <li class="home">
           <RouterLink to="/">首页</RouterLink>
         </li>
-        <li v-for="e in store.globalCategoryData" :key="e.id">
+        <li v-for="e in categoryStore.globalCategoryData" :key="e.id">
           <RouterLink to="/">{{ e.name }}</RouterLink>
         </li>
       </ul>
