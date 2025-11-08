@@ -14,6 +14,6 @@ export const getNewsApi = () =>{
 
 export const getHotApi =()=>{
   return httpInstance({
-    url:'/home/brand'
+    url:'/home/hot'
   })
 }
