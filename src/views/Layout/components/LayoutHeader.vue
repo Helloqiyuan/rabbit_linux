@@ -1,7 +1,7 @@
 <script setup>
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 // 从pinia中获取分类数据
-import {useCategoryStore} from '@/stores/category'
+import { useCategoryStore } from '@/stores/category'
 const categoryStore = useCategoryStore()
 </script>
 
@@ -16,7 +16,14 @@ const categoryStore = useCategoryStore()
           <RouterLink to="/">首页</RouterLink>
         </li>
         <li v-for="e in categoryStore.globalCategoryData" :key="e.id">
-          <RouterLink to="/">{{ e.name }}</RouterLink>
+          <RouterLink :to="{
+            name: 'category',
+            params: {
+              id: e.id
+            }
+          }">
+            {{ e.name }}
+          </RouterLink>
         </li>
       </ul>
       <div class="search">

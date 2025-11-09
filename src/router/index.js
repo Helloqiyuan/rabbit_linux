@@ -11,23 +11,25 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      name: "Layout",
+      name: "layout",
       redirect:"/home",
       component: Layout,
       children: [
         {
           path: "/home",
+          name: "home",
           component: Home,
         },
         {
-          path: "/Category",
+          path: "/category/:id",
+          name: "category",
           component: Category,
         },
       ],
     },
     {
-      path: "/Login",
-      name: "Login",
+      path: "/login",
+      name: "login",
       component: Login,
     },
   ],
