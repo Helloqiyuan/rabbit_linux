@@ -3,19 +3,15 @@ import { onMounted, ref } from "vue";
 import { getGoodsApi } from "@/apis/subCategory";
 export const useGoods = (reqParams) => {
   const GoodsData = ref([]);
-
-  const getGoodsData = async (reqParams) => {
-    console.log(reqParams);
-    const res = await getGoodsApi(reqParams);
-    GoodsData.value = res.result.items;
-    console.log(res);
+  const getGoodsData = async (params) => {
+    const res = await getGoodsApi(params);
+    GoodsData.value = [...GoodsData.value,...res.result.items];
   };
   onMounted(() => {
-    getGoodsData(reqParams);
+    getGoodsData(reqParams.value);
   });
   return {
     GoodsData,
-    reqParams,
     getGoodsData
   };
 };

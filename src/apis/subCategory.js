@@ -1,5 +1,5 @@
 import httpInstance from "@/utils/http";
-
+import {isRef} from 'vue'
 /**
  * @description: 获取二级分类列表数据
  * @param {*} id 分类id
@@ -8,12 +8,12 @@ import httpInstance from "@/utils/http";
 
 export const getSubCategoryFilterApi = (id) => {
   return httpInstance({
-    url:'/category/sub/filter',
-    params:{
-      id
-    }
-  })
-}
+    url: "/category/sub/filter",
+    params: {
+      id,
+    },
+  });
+};
 
 /**
  * @description: 获取导航数据
@@ -27,8 +27,8 @@ export const getSubCategoryFilterApi = (id) => {
  */
 export const getGoodsApi = (data) => {
   return httpInstance({
-    url:'/category/goods/temporary',
-    method:'POST',
+    url: "/category/goods/temporary",
+    method: "POST",
     data
-  })
-}
+  });
+};

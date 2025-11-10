@@ -1,25 +1,36 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useSubCategory } from './composables/useSubCategory';
 import { useGoods } from './composables/useGoods'
 import GoodsItem from '../Home/components/GoodsItem.vue';
-import { onBeforeRouteUpdate } from 'vue-router';
+import { getGoodsApi } from '@/apis/subCategory';
 // id:二级分类的id
 const props = defineProps({
   id: String,
 })
-const chose = ref('')
 const reqParams = ref({
   categoryId: props.id,
   page: 1,
   pageSize: 20,
-  sortField: chose.value,
+  sortField: 'publishTime',
 });
 const { subCategoryData } = useSubCategory(props)
-const { GoodsData,getGoodsData } = useGoods(reqParams)
-onBeforeRouteUpdate(()=>{
-  getGoodsData(reqParams)
-})
+const { GoodsData, getGoodsData } = useGoods(reqParams)
+const tabChange = () => {
+  reqParams.value.page = 1
+  getGoodsData(reqParams.value)
+}
+const stopLoading = ref(false)
+
+const loadNew = async () => {
+  console.log("加载更多。。。");
+  reqParams.value.page += 1
+  const res = await getGoodsApi(reqParams.value);
+  if (res.result.items.length === 0) {
+    stopLoading.value = true
+  }
+  GoodsData.value = [...GoodsData.value, ...res.result.items];
+}
 
 </script>
 
@@ -36,12 +47,12 @@ onBeforeRouteUpdate(()=>{
       </el-breadcrumb>
     </div>
     <div class="sub-container">
-      <el-tabs v-model="chose">
+      <el-tabs v-model="reqParams.sortField" @tab-change="tabChange">
         <el-tab-pane label="最新商品" name="publishTime"></el-tab-pane>
         <el-tab-pane label="最高人气" name="orderNum"></el-tab-pane>
         <el-tab-pane label="评论最多" name="evaluateNum"></el-tab-pane>
       </el-tabs>
-      <div class="body">
+      <div class="body" v-infinite-scroll="loadNew" :infinite-scroll-disabled="stopLoading">
         <!-- 商品列表-->
         <GoodsItem v-for="good in GoodsData" :key="good.id" :good="good" />
       </div>
