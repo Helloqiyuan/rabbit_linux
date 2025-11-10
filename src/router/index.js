@@ -5,7 +5,7 @@ import Login from "@/views/Login/index.vue";
 import Layout from "@/views/Layout/index.vue";
 import Home from "@/views/Home/index.vue";
 import Category from "@/views/Category/index.vue";
-
+import SubCategory from "@/views/SubCategory/index.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -28,6 +28,12 @@ const router = createRouter({
             使得路径参数id能让子组件通过defineProps获得，
             不写这个就需要获取useRoute去拿到params再获取到id
           */
+          props: true,
+        },
+        {
+          path: "category/sub/:id",
+          name: "subCategory",
+          component: SubCategory,
           props: true,
         },
       ],
