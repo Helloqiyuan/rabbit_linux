@@ -41,6 +41,7 @@ const router = createRouter({
           path: "detail/:id",
           name: "datail",
           component: Detail,
+          props: true,
         },
       ],
     },
