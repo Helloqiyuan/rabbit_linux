@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { getGoodDetailApi } from '@/apis/detail';
 import HotDetail from './components/HotDetail.vue';
+import ImageView from '@/components/ImageView/index.vue'
 const goodDetailData = ref({})
 const props = defineProps(["id"])
 const getGoodDetailData = async (id) => {
@@ -38,6 +39,7 @@ onMounted(() => {
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
+              <ImageView />
 
               <!-- 统计数量 -->
               <ul class="goods-sales">
