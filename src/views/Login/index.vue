@@ -1,5 +1,18 @@
 <script setup>
-
+import {ref} from 'vue'
+const form = ref({
+  account:'',
+  password:''
+})
+const rules = ref({
+  account:[
+    {required:true,message:"用户名不能为空",trigger:'blur'}
+  ],
+  password:[
+    {required:true,message:"密码不能为空",trigger:'blur'},
+    {min:6,max:14,message:"密码长度为6-14个字符",trigger:'blur'}
+  ]
+})
 </script>
 
 
@@ -8,9 +21,9 @@
     <header class="login-header">
       <div class="container m-top-20">
         <h1 class="logo">
-          <RouterLink to="/">小兔鲜</RouterLink>
+          <RouterLink to="/home">小兔鲜</RouterLink>
         </h1>
-        <RouterLink class="entry" to="/">
+        <RouterLink class="entry" to="/home">
           进入网站首页
           <i class="iconfont icon-angle-right"></i>
           <i class="iconfont icon-angle-right"></i>
@@ -24,16 +37,15 @@
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form label-position="right" label-width="60px"
-              status-icon>
-              <el-form-item  label="账户">
-                <el-input/>
+            <el-form :model="form" :rules="rules" label-position="right" label-width="60px" status-icon>
+              <el-form-item label="账户" prop="account">
+                <el-input v-model="form.account" />
               </el-form-item>
-              <el-form-item label="密码">
-                <el-input/>
+              <el-form-item label="密码" prop="password">
+                <el-input v-model="form.password"/>
               </el-form-item>
               <el-form-item label-width="22px">
-                <el-checkbox  size="large">
+                <el-checkbox size="large">
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
