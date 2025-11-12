@@ -1,5 +1,9 @@
 <script setup>
 import { ref } from 'vue'
+import { loginApi } from '@/apis/user';
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import 'element-plus/theme-chalk/el-message.css'
 const form = ref({
   account: '',
   password: '',
@@ -16,7 +20,6 @@ const rules = ref({
   agree: [
     {
       validator: (rule, value, callback) => {
-        console.log(value);
         if (value) {
           callback()
         } else {
@@ -27,10 +30,29 @@ const rules = ref({
     }
   ]
 })
+const formRef = ref()
+const router = useRouter()
+const handleLoginBtn = async () => {
+  formRef.value.validate(async (valid) => {
+    if (valid) {
+      console.log("校验通过");
+      const res = await loginApi(form.value);
+      router.replace("/home")
+      ElMessage({
+        type: 'success',
+        message: "登录成功",
+      })
+      console.log("登录成功返回结果:",res);
+    } else {
+      console.log("校验失败");
+    }
+  })
+}
 </script>
 
 
 <template>
+
   <div>
     <header class="login-header">
       <div class="container m-top-20">
@@ -51,7 +73,7 @@ const rules = ref({
         </nav>
         <div class="account-box">
           <div class="form">
-            <el-form :model="form" :rules="rules" label-position="right" label-width="60px" status-icon>
+            <el-form :model="form" ref="formRef" :rules="rules" label-position="right" label-width="60px" status-icon>
               <el-form-item label="账户" prop="account">
                 <el-input v-model="form.account" />
               </el-form-item>
@@ -63,7 +85,7 @@ const rules = ref({
                   我已同意隐私条款和服务条款
                 </el-checkbox>
               </el-form-item>
-              <el-button size="large" class="subBtn">点击登录</el-button>
+              <el-button size="large" class="subBtn" @click="handleLoginBtn">点击登录</el-button>
             </el-form>
           </div>
         </div>
