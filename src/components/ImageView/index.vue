@@ -1,5 +1,5 @@
 <script setup>
-import { ref,watch } from 'vue'
+import { ref, watch, toRefs } from 'vue'
 import { useMouseInElement } from '@vueuse/core'
 // 图片列表
 const imageList = [
@@ -17,24 +17,32 @@ const target = ref(null)
 const { elementX, elementY, isOutside } = useMouseInElement(target)
 const top = ref(0)
 const left = ref(0)
-watch([elementX,elementY],()=>{
+const positionX = ref(0)
+const positionY = ref(0)
+
+watch([elementX, elementY, isOutside], () => {
+  if (isOutside.value) {
+    return
+  }
   // X轴方向
-  if(elementX.value < 100){
+  if (elementX.value < 100) {
     left.value = 0
-  }else if(elementX.value > 100 && elementX.value < 300){
+  } else if (elementX.value > 100 && elementX.value < 300) {
     left.value = elementX.value - 100
-  }else{
+  } else {
     left.value = 200
   }
 
   // Y轴方向
-  if(elementY.value < 100){
+  if (elementY.value < 100) {
     top.value = 0
-  }else if(elementY.value > 100 && elementY.value < 300){
+  } else if (elementY.value > 100 && elementY.value < 300) {
     top.value = elementY.value - 100
-  }else{
+  } else {
     top.value = 200
   }
+  positionX.value = - left.value * 2
+  positionY.value = - top.value * 2
 })
 </script>
 
@@ -43,9 +51,9 @@ watch([elementX,elementY],()=>{
   <div class="goods-image">
     <!-- 左侧大图-->
     <div class="middle" ref="target">
-      <img :src="imageList[currentIndex]" alt="" />
+      <img :src="imageList?.[currentIndex]" alt="" />
       <!-- 蒙层小滑块 -->
-      <div class="layer" :style="{ left: `${left}px`, top: `${top}px` }"></div>
+      <div class="layer" v-show="!isOutside" :style="{ left: `${left}px`, top: `${top}px` }"></div>
     </div>
     <!-- 小图列表 -->
     <ul class="small">
@@ -57,11 +65,11 @@ watch([elementX,elementY],()=>{
     <!-- 放大镜大图 -->
     <div class="large" :style="[
       {
-        backgroundImage: `url(${imageList[0]})`,
-        backgroundPositionX: `0px`,
-        backgroundPositionY: `0px`,
+        backgroundImage: `url(${imageList?.[currentIndex]})`,
+        backgroundPositionX: `${positionX}px`,
+        backgroundPositionY: `${positionY}px`,
       },
-    ]" v-show="false"></div>
+    ]" v-show="!isOutside"></div>
   </div>
 </template>
 
@@ -81,7 +89,7 @@ watch([elementX,elementY],()=>{
   .large {
     position: absolute;
     top: 0;
-    left: 412px;
+    left: 500px;
     width: 400px;
     height: 400px;
     z-index: 500;
