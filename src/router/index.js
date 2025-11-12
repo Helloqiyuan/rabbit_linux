@@ -17,12 +17,12 @@ const router = createRouter({
       component: Layout,
       children: [
         {
-          path: "/home",
+          path: "home",
           name: "home",
           component: Home,
         },
         {
-          path: "/category/:id",
+          path: "category/:id",
           name: "category",
           component: Category,
           /*
