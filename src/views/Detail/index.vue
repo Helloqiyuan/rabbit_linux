@@ -14,7 +14,7 @@ const handleSkuChange = (sku)=>{
   console.log(sku);
 }
 onBeforeRouteUpdate((to)=>{
-  console.log(to);
+  goodDetailData.value = {}
   getGoodDetailData(to.params.id)
 })
 onMounted(() => {
@@ -25,7 +25,7 @@ onMounted(() => {
 
 <template>
   <div class="xtx-goods-page">
-    <div class="container">
+    <div class="container" v-if="goodDetailData.name">
       <div class="bread-container">
         <el-breadcrumb separator=">">
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
