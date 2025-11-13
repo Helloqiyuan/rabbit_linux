@@ -10,9 +10,13 @@ export const useUserStore = defineStore(
       userInfo.value = res.result;
       console.log("(Pinia)登录返回结果:", res.result);
     };
+    const ClearUserInfo = () => {
+      userInfo.value = {};
+    };
     return {
       userInfo,
       getUserInfo,
+      ClearUserInfo,
     };
   },
   {
