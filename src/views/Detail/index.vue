@@ -23,7 +23,6 @@ const count = ref(0)
 // 处理商品数量改变
 const handleCount = (count) => {
   console.log(count);
-  count.value++
 }
 // 处理加入购物车按钮
 const addToCart = () => {
@@ -38,7 +37,7 @@ const addToCart = () => {
       attrsText: skuObj.value.specsText,
       selected: true
     })
-    ElMessage.success("加入成功")
+    ElMessage.success("已加入购物车")
   } else {
     ElMessage.warning("请选择规格")
   }
@@ -107,7 +106,7 @@ onMounted(() => {
               <p class="g-desc">{{ goodDetailData.desc }} </p>
               <p class="g-price">
                 <span>{{ goodDetailData.price }}</span>
-                <span> {{ goodDetailData.oldPrice }}</span>
+                <span v-show="goodDetailData.price > goodDetailData.oldPrice"> {{ goodDetailData.oldPrice }}</span>
               </p>
               <div class="g-service">
                 <dl>
