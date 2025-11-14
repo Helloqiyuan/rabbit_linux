@@ -1,10 +1,14 @@
 import { ElMessage } from "element-plus";
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 export const useCartStore = defineStore(
   "cart",
   () => {
     const cartList = ref([]);
+    const isAll = computed(() => {
+      // 找到是否存在未选中的数据 存在返回false 不存在(全选)返回true
+      return cartList.value.find((e) => e.selected === false) ? false : true;
+    });
     const addCart = (cart) => {
       const item = cartList.value.find((e) => e?.skuId === cart.skuId);
       if (item) {
@@ -22,6 +26,10 @@ export const useCartStore = defineStore(
       }
       console.log("(cartPinia)未找到", skuId, "对应的数据");
     };
+    // 更新所有数据的selected为selectedValue
+    const updateAllSelected = (selectedValue) => {
+      cartList.value.forEach((e) => (e.selected = selectedValue));
+    };
     // 根据skuId删除数据
     const deleteCartByskuId = (skuId) => {
       ElMessage({
@@ -36,28 +44,32 @@ export const useCartStore = defineStore(
     const clearCartList = () => {
       cartList.value = [];
     };
+    // 获取总共有多少件商品
     const getTotalCount = () => {
-      let res = 0;
-      cartList.value.forEach((e) => (res += e.count));
-      return res;
+      return cartList.value.reduce((a, c) => a + c.count, 0);
     };
+    // 获取购物车内所有商品的总价格
     const getTotalPrice = () => {
-      let res = 0;
-      cartList.value.forEach((e) => (res += Number(e.price) * Number(e.count)));
-      return res;
+      return cartList.value.reduce((a, c) => a + c.price * c.count, 0).toFixed(2);
     };
+    // 获取选中商品的总价格
+    const getSelectedPrice = () => {
+      return cartList.value.reduce((a, c) => a + (c.selected ? c.price * c.count : 0), 0).toFixed(2);
+    };
+
     const getTotalSelected = () => {
-      let res = 0;
-      cartList.value.forEach((e) => (e.selected ? (res += e.count) : ""));
-      return res;
+      return cartList.value.reduce((a, c) => a + (c.selected ? c.count : 0), 0);
     };
     return {
       cartList,
+      isAll,
       addCart,
       updateSelected,
+      updateAllSelected,
       deleteCartByskuId,
       clearCartList,
       getTotalCount,
+      getSelectedPrice,
       getTotalPrice,
       getTotalSelected,
     };

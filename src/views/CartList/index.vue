@@ -1,10 +1,14 @@
 <script setup>
 import { useCartStore } from '@/stores/cart';
 const cartStore = useCartStore()
-const handleCheckBoxChange = (value, i) => {
-  cartStore.updateSelected(i.skuId,value)
+// 每个单选框
+const handleSingleCheckBoxChange = (value, i) => {
+  cartStore.updateSelected(i.skuId, value)
 }
-console.log("updating...");
+// 处理全选框
+const handleAllCheckBox = (value) => {
+  cartStore.updateAllSelected(value)
+}
 </script>
 
 <template>
@@ -15,7 +19,7 @@ console.log("updating...");
           <thead>
             <tr>
               <th width="120">
-                <el-checkbox />
+                <el-checkbox :model-value="cartStore.isAll" @change="handleAllCheckBox" />
               </th>
               <th width="400">商品信息</th>
               <th width="220">单价</th>
@@ -28,7 +32,7 @@ console.log("updating...");
           <tbody>
             <tr v-for="i in cartStore.cartList" :key="i.id">
               <td>
-                <el-checkbox :model-value="i.selected" @change="(value) => handleCheckBoxChange(value, i)" />
+                <el-checkbox :model-value="i.selected" @change="(value) => handleSingleCheckBoxChange(value, i)" />
               </td>
               <td>
                 <div class="goods">
@@ -77,7 +81,7 @@ console.log("updating...");
       <div class="action">
         <div class="batch">
           共 {{ cartStore.getTotalCount() }} 件商品，已选择 {{ cartStore.getTotalSelected() }} 件，商品合计：
-          <span class="red">¥ {{ cartStore.getTotalPrice() }} </span>
+          <span class="red">¥ {{ cartStore.getSelectedPrice() }} </span>
         </div>
         <div class="total">
           <el-button size="large" type="primary">下单结算</el-button>
