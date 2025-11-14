@@ -3,17 +3,48 @@ import { ref, onMounted } from 'vue'
 import { getGoodDetailApi } from '@/apis/detail';
 import HotDetail from './components/HotDetail.vue';
 import { onBeforeRouteUpdate } from 'vue-router';
+import { useCartStore } from '@/stores/cart';
+import { ElMessage } from 'element-plus';
 const goodDetailData = ref({})
 const props = defineProps(["id"])
+const cartStore = useCartStore()
 const getGoodDetailData = async (id) => {
   const res = await getGoodDetailApi(id)
   goodDetailData.value = res.result
-  console.log(goodDetailData.value);
 }
-const handleSkuChange = (sku)=>{
+// 处理Sku组件
+const skuObj = ref({})
+const handleSkuChange = (sku) => {
   console.log(sku);
+  skuObj.value = sku
 }
-onBeforeRouteUpdate((to)=>{
+// 当前商品的数量
+const count = ref(0)
+// 处理商品数量改变
+const handleCount = (count) => {
+  console.log(count);
+  count.value++
+}
+// 处理加入购物车按钮
+const addToCart = () => {
+  if (skuObj.value.skuId) {
+    cartStore.addCart({
+      id: goodDetailData.value.id,
+      name: goodDetailData.value.name,
+      pictrue: goodDetailData.value.mainPictures[0],
+      price: goodDetailData.value.price,
+      count: count.value,
+      skuId: skuObj.value.skuId,
+      attrsText: skuObj.value.specsText,
+      selected: true
+    })
+    ElMessage.success("加入成功")
+  } else {
+    ElMessage.warning("请选择规格")
+  }
+}
+// 处理点击hotDetail时不刷新的问题
+onBeforeRouteUpdate((to) => {
   goodDetailData.value = {}
   getGoodDetailData(to.params.id)
 })
@@ -44,7 +75,7 @@ onMounted(() => {
           <div class="goods-info">
             <div class="media">
               <!-- 图片预览区 -->
-              <XtxImageView :image-list="goodDetailData.mainPictures"/>
+              <XtxImageView :image-list="goodDetailData.mainPictures" />
 
               <!-- 统计数量 -->
               <ul class="goods-sales">
@@ -65,7 +96,7 @@ onMounted(() => {
                 </li>
                 <li v-if="goodDetailData.brand">
                   <p>品牌信息</p>
-                  <p>{{ goodDetailData.brand.name}}</p>
+                  <p>{{ goodDetailData.brand.name }}</p>
                   <p><i class="iconfont icon-dynamic-filling"></i>品牌主页</p>
                 </li>
               </ul>
@@ -94,12 +125,12 @@ onMounted(() => {
                 </dl>
               </div>
               <!-- sku组件 -->
-               <XtxSku :goods="goodDetailData" @change="handleSkuChange"/>
+              <XtxSku :goods="goodDetailData" @change="handleSkuChange" />
               <!-- 数据组件 -->
-
+              <el-input-number v-model="count" :min="1" :max="10" @change="handleCount" />
               <!-- 按钮组件 -->
               <div>
-                <el-button size="large" class="btn">
+                <el-button size="large" class="btn" @click="addToCart">
                   加入购物车
                 </el-button>
               </div>
@@ -122,14 +153,15 @@ onMounted(() => {
                     </li>
                   </ul>
                   <!-- 图片 -->
-                  <img v-for="(pictrue,index) in goodDetailData.details?.pictures" v-img-lazy="pictrue" :key="index"  alt="">
+                  <img v-for="(pictrue, index) in goodDetailData.details?.pictures" v-img-lazy="pictrue" :key="index"
+                    alt="">
                 </div>
               </div>
             </div>
             <!-- 24热榜+专题推荐 -->
             <div class="goods-aside">
-              <HotDetail :id="props.id" :hot-type="1"/>
-              <HotDetail :id="props.id" :hot-type="2"/>
+              <HotDetail :id="props.id" :hot-type="1" />
+              <HotDetail :id="props.id" :hot-type="2" />
 
             </div>
           </div>
