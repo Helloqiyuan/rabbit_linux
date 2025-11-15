@@ -1,7 +1,7 @@
 import { ElMessage } from "element-plus";
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import { insertCartApi, getLatestCartApi, deleteCartApi } from "@/apis/cart";
+import { insertCartApi, getLatestCartApi, deleteCartApi, mergeCartApi } from "@/apis/cart";
 import { useUserStore } from "./user";
 export const useCartStore = defineStore(
   "cart",
@@ -11,14 +11,32 @@ export const useCartStore = defineStore(
       // 找到是否存在未选中的数据 存在返回false 不存在(全选)返回true
       return cartList.value.find((e) => e.selected === false) ? false : true;
     });
+    // 拉取远程数据同步到本地 直接覆盖本地数据
+    const getRemoteCartData = async () => {
+      const res = await getLatestCartApi();
+      cartList.value = res.result;
+    };
+    // 只在请求登录时用
+    // 将未登录时的本地购物车与远程数据合并
+    const mergeLocalDataToServerData = async () => {
+      await mergeCartApi(
+        cartList.value.map((e) => {
+          return {
+            skuId: e.skuId,
+            selected: e.selected,
+            count: e.count,
+          };
+        })
+      );
+      await getRemoteCartData();
+    };
     const addCart = async (cart) => {
       const userStore = useUserStore();
       const token = userStore.userInfo.token;
       // 有token就把购物车加入到服务器
       if (token) {
         await insertCartApi({ skuId: cart.skuId, count: cart.count });
-        const res = await getLatestCartApi();
-        cartList.value = res.result;
+        await getRemoteCartData();
       } else {
         // 没有token暂时把数据存到本地pinia
         const item = cartList.value.find((e) => e?.skuId === cart.skuId);
@@ -49,8 +67,7 @@ export const useCartStore = defineStore(
       const targetCartName = cartList.value.filter((e) => e.skuId === skuId)[0].name;
       if (token) {
         await deleteCartApi([skuId]);
-        const res = await getLatestCartApi();
-        cartList.value = res.result;
+        await getRemoteCartData();
       } else {
         cartList.value = cartList.value.filter((e) => e.skuId !== skuId);
       }
@@ -87,6 +104,8 @@ export const useCartStore = defineStore(
     return {
       cartList,
       isAll,
+      getRemoteCartData,
+      mergeLocalDataToServerData,
       addCart,
       updateSelected,
       updateAllSelected,

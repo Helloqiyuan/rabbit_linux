@@ -7,7 +7,7 @@ export const insertCartApi = ({ skuId, count }) => {
     method: "POST",
     data: {
       skuId,
-      count
+      count,
     },
   });
 };
@@ -24,7 +24,16 @@ export const deleteCartApi = (ids) => {
     url: "/member/cart",
     method: "DELETE",
     data: {
-      ids
+      ids,
     },
+  });
+};
+
+// 将本地购物车data与远程数据融合
+export const mergeCartApi = (data) => {
+  return httpInstance({
+    url: "/member/cart/merge",
+    method: "POST",
+    data,
   });
 };
