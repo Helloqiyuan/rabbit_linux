@@ -50,7 +50,7 @@ const submitOrder = async () => {
     addressId: curAddress.value.id
   })
   await cartStore.getRemoteCartData()
-  router.push(`/pay?${res.result.id}`)
+  router.push(`/pay?id=${res.result.id}`)
 }
 onMounted(() => {
   getAddressData()

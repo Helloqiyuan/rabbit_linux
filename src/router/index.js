@@ -60,6 +60,9 @@ const router = createRouter({
           path: "pay",
           name: "pay",
           component: Pay,
+          props(route) {
+            return route.query;
+          },
         },
       ],
     },

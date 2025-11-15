@@ -1,14 +1,16 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { getOrderApi } from '@/apis/checkout'
-const orderData = ref({})
+import { getOrderApi } from '@/apis/pay'
+const payInfo = ref({})
 const props = defineProps(['id'])
 const getOrderData = async (id) => {
   const res = await getOrderApi(id)
-  orderData.value = res.result
+  payInfo.value = res.result
+  console.log(payInfo.value);
 }
-onMounted(()=>{
-  getOrderData()
+onMounted(() => {
+  console.log(props.id);
+  getOrderData(props.id)
 })
 </script>
 

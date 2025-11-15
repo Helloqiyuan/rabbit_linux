@@ -16,12 +16,4 @@ export const createOrderApi = (data) => {
   });
 };
 
-// 获取订单信息
-export const getOrderApi = (id) => {
-  return httpInstance({
-    url: "/member/order",
-    query: {
-      id,
-    },
-  });
-};
+
