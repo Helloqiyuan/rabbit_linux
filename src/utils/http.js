@@ -1,19 +1,27 @@
 import axios from "axios";
+import { ref } from "vue";
 import { ElMessage } from "element-plus";
 import "element-plus/theme-chalk/el-message.css";
 import { useUserStore } from "@/stores/user";
 import router from "@/router";
 import NProgress from "nprogress";
-import "nprogress/nprogress.css";
+
 const httpInstance = axios.create({
   baseURL: "http://pcapi-xiaotuxian-front-devtest.itheima.net",
-  timeout: 20000,
+  timeout: 60000,
 });
+const currentRequest = ref(0);
+// 导出 currentRequest 供路由守卫使用
+// export { currentRequest };
 
 // axios请求拦截器
 httpInstance.interceptors.request.use(
   (config) => {
-    NProgress.start();
+    if(currentRequest.value === 0){
+      console.log("axios start...");
+      NProgress.start()
+    }
+    currentRequest.value++;
     const userStore = useUserStore();
     const token = userStore.userInfo.token;
     if (token) {
@@ -27,10 +35,18 @@ httpInstance.interceptors.request.use(
 // axios响应式拦截器
 httpInstance.interceptors.response.use(
   (res) => {
-    NProgress.done();
+    currentRequest.value--;
+    if (currentRequest.value === 0) {
+      console.log("axios done...");
+      NProgress.done();
+    }
     return res.data;
   },
   (e) => {
+    currentRequest.value--;
+    if (currentRequest.value === 0) {
+      NProgress.done();
+    }
     const userStore = useUserStore();
     ElMessage.warning(e.response.data.message);
     // 401报错
@@ -39,7 +55,6 @@ httpInstance.interceptors.response.use(
       userStore.ClearUserInfo();
       router.push("/login");
     }
-    NProgress.done();
     return Promise.reject(e);
   }
 );
