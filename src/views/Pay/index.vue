@@ -31,9 +31,9 @@ onMounted(() => {
     <div class="container">
       <!-- 付款信息 -->
       <div class="pay-info">
-        <span class="icon iconfont icon-queren2" v-if="countDown.time.value > 0"></span>
-        <span class="icon iconfont icon-shanchu red" v-else-if="payInfo.id && countDown.time.value <= 0"></span>
-        <div class="tip" v-if="countDown.time.value > 0">
+        <span class="icon iconfont icon-queren2" v-if="countDown.time.value >= 0"></span>
+        <span class="icon iconfont icon-shanchu red" v-else-if="payInfo.id && countDown.time.value < 0"></span>
+        <div class="tip" v-if="countDown.time.value >= 0">
           <p>订单提交成功！请尽快完成支付。</p>
           <p>支付还剩 <span>{{ countDown.formatTime }}</span>, 超时后将取消订单</p>
         </div>

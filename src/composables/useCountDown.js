@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 export const useCountDown = () => {
-  const time = ref(0);
+  const time = ref(-1);
   const formatTime = computed(() => {
     if (time.value > 60) {
       return parseInt(time.value / 60) + " 分 " + (time.value % 60) + " 秒 ";
@@ -12,7 +12,7 @@ export const useCountDown = () => {
   const startAt = (second) => {
     time.value = second;
     timer = setInterval(() => {
-      if (time.value > 0) {
+      if (time.value >= 0) {
         time.value--;
       } else {
         clearInterval(timer);
