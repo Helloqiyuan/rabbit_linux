@@ -16,20 +16,24 @@ const orderList = ref([])
 const params = ref({
   orderState: 0,
   page: 1,
-  pageSize: 5
+  pageSize: 2
 })
 const getOrderData = async () => {
   const res = await getUserOrder(params.value)
   orderList.value = res.result.items
 }
-onMounted(() => {
+const handleChange = async (tab)=>{
+  params.value.orderState = tab
+  getOrderData()
+}
+onMounted( () => {
   getOrderData()
 })
 </script>
 
 <template>
   <div class="order-container">
-    <el-tabs>
+    <el-tabs @tab-change="handleChange">
       <!-- tab切换 -->
       <el-tab-pane v-for="item in tabTypes" :key="item.name" :label="item.label" />
 
