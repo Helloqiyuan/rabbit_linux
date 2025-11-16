@@ -10,7 +10,10 @@ import Detail from "@/views/Detail/index.vue";
 import CartList from "@/views/CartList/index.vue";
 import CheckOut from "@/views/CheckOut/index.vue";
 import Pay from "@/views/Pay/index.vue";
-import Paycallback from "@/views/Pay/paycallback.vue";
+import Paycallback from "@/views/Pay/PayCallBack.vue";
+import Member from "@/views/Member/index.vue";
+import UserInfo from "@/views/Member/components/UserInfo.vue";
+import UserOrder from "@/views/Member/components/UserOrder.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -73,6 +76,23 @@ const router = createRouter({
             console.log(route.query);
             return route.query;
           },
+        },
+        {
+          path: "member",
+          name: "member",
+          component: Member,
+          children: [
+            {
+              path: "user",
+              name: "userinfo",
+              component: UserInfo,
+            },
+            {
+              path: "order",
+              name: "order",
+              component: UserOrder,
+            },
+          ],
         },
       ],
     },
