@@ -14,8 +14,8 @@ import Paycallback from "@/views/Pay/PayCallBack.vue";
 import Member from "@/views/Member/index.vue";
 import UserInfo from "@/views/Member/components/UserInfo.vue";
 import UserOrder from "@/views/Member/components/UserOrder.vue";
-// import NProgress from "nprogress";
-// import { currentRequest } from "@/utils/http";
+import NProgress from "nprogress";
+import { currentRequest } from "@/utils/http";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -117,9 +117,10 @@ const router = createRouter({
     };
   },
 });
-// router.beforeEach(() => {
-//   NProgress.start();
-// });
+router.beforeEach(() => {
+  debugger;
+  NProgress.start();
+});
 /*
   1.如果新页面有axios请求则会在http.js中done
     因为在加载新页面时 拦截器的执行(主要是currentRequest++)比afteEach先
@@ -127,15 +128,16 @@ const router = createRouter({
   2.如果新页面没有axios请求 在dom更新后 js主线程也空闲了 轮到setTimeout提交的回调函数执行
     此时也就done了，解决了页面没有请求时进度条无法更新的问题
 */
-// router.afterEach(() => {
-//   // 使用 nextTick 确保在请求拦截器执行后再检查
-//   setTimeout(() => {
-//     // 如果没有正在进行的请求，关闭进度条
-//     if (currentRequest.value === 0) {
-//       console.log("router done...");
-//       NProgress.done();
-//     }
-//   }, 0);
-// });
+router.afterEach(() => {
+  // 使用 nextTick 确保在请求拦截器执行后再检查
+  setTimeout(() => {
+    debugger
+    // 如果没有正在进行的请求，关闭进度条
+    if (currentRequest.value === 0) {
+      console.log("router done...");
+      NProgress.done();
+    }
+  }, 0);
+});
 
 export default router;

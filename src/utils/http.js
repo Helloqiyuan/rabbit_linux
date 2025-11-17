@@ -12,15 +12,16 @@ const httpInstance = axios.create({
 });
 const currentRequest = ref(0);
 // 导出 currentRequest 供路由守卫使用
-// export { currentRequest };
+export { currentRequest };
 
 // axios请求拦截器
 httpInstance.interceptors.request.use(
   (config) => {
-    if(currentRequest.value === 0){
-      console.log("axios start...");
-      NProgress.start()
-    }
+    // debugger
+    // if(currentRequest.value === 0){
+    //   console.log("axios start...");
+    //   NProgress.start()
+    // }
     currentRequest.value++;
     const userStore = useUserStore();
     const token = userStore.userInfo.token;
@@ -35,6 +36,7 @@ httpInstance.interceptors.request.use(
 // axios响应式拦截器
 httpInstance.interceptors.response.use(
   (res) => {
+    // debugger
     currentRequest.value--;
     if (currentRequest.value === 0) {
       console.log("axios done...");
