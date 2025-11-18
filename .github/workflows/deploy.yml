@@ -1,69 +1,37 @@
-user www-data;
-worker_processes auto;
-pid /run/nginx.pid;
-error_log /var/log/nginx/error.log;
-include /etc/nginx/modules-enabled/*.conf;
+name: Deploy to Linux Nginx
 
-events {
-    worker_connections 768;
-    # multi_accept on;
-}
+on:
+  push:
+    branches:
+      - master
 
-http {
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, linux]
 
-    ##
-    # Basic Settings
-    ##
-    sendfile on;
-    tcp_nopush on;
-    types_hash_max_size 2048;
-    # server_tokens off;
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # server_names_hash_bucket_size 64;
-    # server_name_in_redirect off;
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.11.0'
 
-    include /etc/nginx/mime.types;
-    default_type application/octet-stream;
+      - name: Install dependencies
+        run: npm ci
 
-    ##
-    # SSL Settings
-    ##
-    ssl_protocols TLSv1 TLSv1.1 TLSv1.2 TLSv1.3; # Dropping SSLv3, ref: POODLE
-    ssl_prefer_server_ciphers on;
+      - name: Build project
+        run: npm run build
 
-    ##
-    # Logging Settings
-    ##
-    access_log /var/log/nginx/access.log;
+      - name: Clear old files
+        run: |
+          if [ -d "/var/www/html/dist" ]; then
+            rm -rf /var/www/html/dist/*
+          else
+            mkdir -p /var/www/html/dist
+          fi
 
-    ##
-    # Gzip Settings
-    ##
-    gzip on;
-    # gzip_vary on;
-    # gzip_proxied any;
-    # gzip_comp_level 6;
-    # gzip_buffers 16 8k;
-    # gzip_http_version 1.1;
-    # gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript;
-
-    ##
-    # Virtual Host Configs
-    ##
-    server {
-        listen 80;
-        server_name localhost;
-
-        root /var/www/html/dist;
-        index index.html index.htm;
-        try_files $uri $uri/ /index.html;
-
-        error_page 500 502 503 504 /50x.html;
-        location = /50x.html {
-            root /var/www/html/dist;
-        }
-    }
-
-    include /etc/nginx/conf.d/*.conf;
-    include /etc/nginx/sites-enabled/*;
-}
+      - name: Copy build files to Nginx
+        run: |
+          cp -r dist/* /var/www/html/dist
